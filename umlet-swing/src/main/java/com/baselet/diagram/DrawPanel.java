@@ -190,6 +190,34 @@ public class DrawPanel extends JLayeredPane implements Printable {
 		return gridElements;
 	}
 
+	public List<GridElement> getPages() {
+		List<GridElement> pages = new ArrayList<GridElement>();
+
+		// Search for pages
+		for (GridElement e : getGridElements()) {
+			if (null != e.getSetting("page")) {
+				pages.add(e);
+			}
+		}
+
+		return pages;
+	}
+
+	public List<GridElement> getPageElements(GridElement page) {
+
+		List<GridElement> pageElements = new ArrayList<GridElement>();
+		pageElements.add(page);
+
+		// Identify the elements per page
+		Rectangle pageArea = page.getRectangle();
+		for (GridElement e : getGridElements()) {
+			if (e.isInRange(pageArea)) {
+				pageElements.add(e);
+			}
+		}
+		return pageElements;
+	}
+
 	public List<Relation> getOldRelations() {
 		return getHelper(Relation.class);
 	}

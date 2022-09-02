@@ -48,12 +48,14 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class OutputHandler {
 
-	private OutputHandler() {} // private constructor to avoid instantiation
+	private OutputHandler() {
+	} // private constructor to avoid instantiation
 
 	public static void createAndOutputToFile(String extension, File file, DiagramHandler handler) throws Exception {
 		OutputStream ostream = new FileOutputStream(file);
 		createToStream(extension, ostream, handler);
 		ostream.close();
+		createToStreamForPages(extension, file, handler);
 	}
 
 	public static void createToStream(String extension, OutputStream ostream, DiagramHandler handler) throws Exception {
@@ -63,12 +65,36 @@ public class OutputHandler {
 
 		// if some GridElements are selected, only export them
 		Collection<GridElement> elementsToDraw = handler.getDrawPanel().getSelector().getSelectedElements();
-		// if nothing is selected, draw everything
+
+		// if no page frame is defined, draw everything
 		if (elementsToDraw.isEmpty()) {
 			elementsToDraw = handler.getDrawPanel().getGridElements();
 		}
 
 		OutputHandler.exportToOutputStream(extension, ostream, elementsToDraw, handler.getFontHandler());
+
+		handler.setGridAndZoom(oldZoom, false); // Zoom back to the oldGridsize after execution
+	}
+
+	private static void createToStreamForPages(String extension, File file, DiagramHandler handler) throws Exception {
+
+		// Skip export of pages if something is selected
+		if (!handler.getDrawPanel().getSelector().getSelectedElements().isEmpty()) {
+			return;
+		}
+
+		int oldZoom = handler.getGridSize();
+		handler.setGridAndZoom(Constants.DEFAULTGRIDSIZE, false); // Zoom to the defaultGridsize before execution
+
+		// File without extension
+		String filenameWholeExport = file.getAbsolutePath().replaceFirst("[.][^.]+$", "");
+
+		for (GridElement page : handler.getDrawPanel().getPages()) {
+			OutputStream ostream = new FileOutputStream(new File(filenameWholeExport + "_" + page.getSetting("page") + "." + extension));
+			Collection<GridElement> elementsToDraw = handler.getDrawPanel().getPageElements(page);
+			OutputHandler.exportToOutputStream(extension, ostream, elementsToDraw, handler.getFontHandler());
+			ostream.close();
+		}
 
 		handler.setGridAndZoom(oldZoom, false); // Zoom back to the oldGridsize after execution
 	}
