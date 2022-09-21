@@ -1,0 +1,21 @@
+{
+    "version": "15.1.0-SNAPSHOT-687",
+    "description": "Free UML Tool for Fast UML Diagrams",
+    "homepage": "https://www.umlet.com/",
+    "license": "GPL-3.0-or-later",
+    "url": "https://raw.githubusercontent.com/basejumpa/umlet/scoop/umlet-standalone-15.1.0-SNAPSHOT-687.zip",
+    "hash": "b8857652a7062136a9a8aef06d363d22c4e49ab5316f70070fa4a065241fa316",
+    "extract_dir": "Umlet",
+    "pre_install": "Set-Content \"$dir\\Umlet_cmd.bat\" '@javaw.exe -jar \"%~dp0umlet.jar\" %*' -Encoding Ascii",
+    "bin": [
+        "Umlet.exe",
+        "Umlet_cmd.bat"
+    ],
+    "shortcuts": [
+        [
+            "Umlet.exe",
+            "Umlet",
+            "Umlet_cmd.bat"
+        ]
+    ]
+}
